@@ -45,12 +45,51 @@
                     </page>
                     <page string="Evidencias Fotográficas" name="images">
                         <p class="text-muted">Puedes agregar hasta 15 imágenes por orden de servicio.</p>
-                        <field name="image_ids" nolabel="1">
-                            <tree editable="bottom">
-                                <field name="image" widget="image" options="{'zoom': true, 'size': [128, 128]}"/>
+                        <field name="image_ids" mode="kanban">
+                            <kanban>
+                                <field name="id"/>
+                                <field name="image"/>
                                 <field name="description"/>
-                                <button name="action_download" type="object" icon="fa-download" title="Descargar" class="btn btn-sm btn-link" attrs="{'invisible': ['|', ('id', '=', False), ('image', '=', False)]}"/>
-                            </tree>
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <div class="oe_kanban_global_click">
+                                            <div class="o_dropdown_kanban dropdown">
+                                                <a class="dropdown-toggle o-no-caret btn" role="button" data-bs-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                                    <span class="fa fa-ellipsis-v"/>
+                                                </a>
+                                                <div class="dropdown-menu" role="menu">
+                                                    <a role="menuitem" type="edit" class="dropdown-item">Editar</a>
+                                                    <a t-if="record.image.raw_value" role="menuitem" type="object" name="action_download" class="dropdown-item">Descargar</a>
+                                                    <a role="menuitem" type="delete" class="dropdown-item">Eliminar</a>
+                                                </div>
+                                            </div>
+                                            <div class="o_kanban_image">
+                                                <img t-att-src="kanban_image('fleet.service.image', 'image', record.id.raw_value)" alt="Imagen"/>
+                                            </div>
+                                            <div class="oe_kanban_details">
+                                                <div class="o_kanban_record_title">
+                                                    <strong><field name="description"/></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+                            <form>
+                                <sheet>
+                                    <div class="row">
+                                        <div class="col-4 text-center">
+                                            <field name="image" widget="image" class="oe_avatar"/>
+                                        </div>
+                                        <div class="col-8">
+                                            <group>
+                                                <field name="description" placeholder="Añade una descripción..."/>
+                                                <button name="action_download" type="object" string=" Descargar Imagen" icon="fa-download" class="btn-secondary mt-2" attrs="{'invisible': ['|', ('id', '=', False), ('image', '=', False)]}"/>
+                                            </group>
+                                        </div>
+                                    </div>
+                                </sheet>
+                            </form>
                         </field>
                     </page>
                 </notebook>
