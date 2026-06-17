@@ -48,6 +48,8 @@
                         <field name="image_ids" nolabel="1">
                             <tree editable="bottom">
                                 <field name="image" widget="image" options="{'zoom': true, 'size': [128, 128]}"/>
+                                <field name="image_filename" invisible="1"/>
+                                <field name="image_download" widget="binary" filename="image_filename"/>
                                 <field name="description"/>
                             </tree>
                         </field>
