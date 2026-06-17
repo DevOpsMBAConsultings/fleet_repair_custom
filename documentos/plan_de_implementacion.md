@@ -43,6 +43,21 @@ Se actualizará el método `_create_stock_picking()` para:
 #### [NEW] `views/stock_picking_views.xml`
 Se heredará la vista formulario de `stock.picking` para insertar el campo `fleet_service_id` debajo del documento de origen, permitiendo que el usuario pueda darle clic y viajar a la orden de servicio directamente desde el módulo de Inventario.
 
+### 7. Fase 5: Validación Flexible de Inventario (Pop-up de Confirmación)
+**Objetivo**: Advertir al usuario si no hay inventario suficiente al pasar la orden a "En Progreso", pero darle la opción de "Continuar" bajo su propia responsabilidad o "Cancelar".
+
+#### [NEW] `models/fleet_service_inventory_warning.py`
+Se creará un modelo transitorio (`TransientModel`) llamado `fleet.service.inventory.warning` que actuará como el Pop-up. Contendrá un mensaje de texto mostrando qué piezas faltan y un botón para forzar el cambio de estado.
+
+#### [NEW] `views/fleet_service_inventory_warning_views.xml`
+Se creará la vista del Pop-up con los botones "Continuar" y "Cancelar".
+
+#### [MODIFY] `models/fleet_vehicle_log_services.py`
+Se actualizará el método `action_in_progress()` para:
+1. Buscar la ubicación de stock principal.
+2. Iterar sobre los repuestos solicitados y sumar el inventario disponible.
+3. Si faltan productos, abrir el Pop-up (wizard) detallando qué falta (Requerido vs Disponible). Si el usuario da clic en "Continuar", el estado pasará forzosamente a "En Progreso". Si hay inventario completo, pasará directamente sin abrir nada.
+
 ## Cambios Propuestos
 
 ### 1. Módulo: `fleet_repair_custom`

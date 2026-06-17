@@ -21,6 +21,41 @@ class FleetVehicleLogServices(models.Model):
 
     def action_in_progress(self):
         for record in self:
+            missing_items = []
+            company_id = record.company_id.id or self.env.company.id
+            warehouse = self.env['stock.warehouse'].search([('company_id', '=', company_id)], limit=1)
+            picking_type = self.env['stock.picking.type'].search([
+                ('code', '=', 'outgoing'),
+                ('warehouse_id', '=', warehouse.id)
+            ], limit=1)
+            
+            if picking_type and picking_type.default_location_src_id:
+                location_id = picking_type.default_location_src_id
+                for line in record.part_line_ids:
+                    if line.product_id.type == 'product':
+                        quants = self.env['stock.quant'].search([
+                            ('product_id', '=', line.product_id.id),
+                            ('location_id', '=', location_id.id)
+                        ])
+                        available_qty = sum(quants.mapped('available_quantity'))
+                        if available_qty < line.quantity:
+                            missing_items.append(f"- {line.product_id.name} (Requerido: {line.quantity}, Disponible: {available_qty})")
+            
+            if missing_items:
+                message = "Falta inventario para las siguientes piezas:\n" + "\n".join(missing_items) + "\n\nSi le das a Continuar, la orden pasará a En Progreso."
+                wizard = self.env['fleet.service.inventory.warning'].create({
+                    'service_id': record.id,
+                    'message': message
+                })
+                return {
+                    'name': 'Advertencia de Inventario',
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'fleet.service.inventory.warning',
+                    'res_id': wizard.id,
+                    'view_mode': 'form',
+                    'target': 'new',
+                }
+                
             record.state = 'in_progress'
 
     def action_done(self):

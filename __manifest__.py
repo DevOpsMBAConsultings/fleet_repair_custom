@@ -1,6 +1,6 @@
 {
     'name': 'Gestión de Reparaciones de Flota',
-    'version': '16.0.1.0.4',
+    'version': '16.0.1.0.5',
     'category': 'Human Resources/Fleet',
     'summary': 'Control de inventario para reparaciones y mantenimientos de vehículos',
     'author': 'MBA Consultings',
@@ -11,6 +11,7 @@
         'views/fleet_service_type_views.xml',
         'views/fleet_menu_views.xml',
         'views/stock_picking_views.xml',
+        'views/fleet_service_inventory_warning_views.xml',
     ],
     'installable': True,
     'application': False,
