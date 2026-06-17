@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Inherit Service Types Tree View -->
+        <record id="fleet_vehicle_service_types_view_tree_custom" model="ir.ui.view">
+            <field name="name">fleet.service.type.tree.custom</field>
+            <field name="model">fleet.service.type</field>
+            <field name="inherit_id" ref="fleet.fleet_vehicle_service_types_view_tree"/>
+            <field name="arch" type="xml">
+                <!-- Replace native category with custom_repair_category -->
+                <xpath expr="//field[@name='category']" position="replace">
+                    <field name="custom_repair_category"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit Service Types Search View -->
+        <record id="fleet_vehicle_service_types_view_search_custom" model="ir.ui.view">
+            <field name="name">fleet.service.type.search.custom</field>
+            <field name="model">fleet.service.type</field>
+            <field name="inherit_id" ref="fleet.fleet_vehicle_service_types_view_search"/>
+            <field name="arch" type="xml">
+                <!-- Replace native category search field -->
+                <xpath expr="//field[@name='category']" position="replace">
+                    <field name="custom_repair_category"/>
+                </xpath>
+                <!-- Replace native groupby filter -->
+                <xpath expr="//filter[@name='groupby_category']" position="replace">
+                    <filter name="groupby_custom_category" string="Categoría" context="{'group_by' : 'custom_repair_category'}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

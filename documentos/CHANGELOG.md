@@ -9,6 +9,16 @@ El formulario estándar de **Mantenimiento/Servicios de Flota** (en la aplicaci�
 - **Terminado (Done):** Al presionar "Finalizar Servicio", se da por terminada la labor y se ejecuta la lógica de inventario.
 - **Cancelado (Cancelled):** Permite reversar el proceso (y cancelar el movimiento de inventario si no ha sido procesado).
 
+### Versión 16.0.1.0.2 - 2026-06-17
+- Se rediseñó el `statusbar` para utilizar la directiva `position="replace"`, sobrescribiendo la barra nativa de Odoo y eliminando la duplicidad visual en pantalla.
+- Se filtraron los estados disponibles en el backend de Odoo para la orden de servicio (`fleet.vehicle.log.services`), permitiendo únicamente los 5 estados dictados por las reglas de negocio (Borrador, En Espera, En Progreso, Hecho, Cancelado).
+- Se estabilizó la versión para el entorno de desarrollo y se verificó que el flujo visual corresponde ahora exactamente al proceso real del taller.
+
+### Versión 16.0.1.0.3 - 2026-06-17
+- **Nuevas Categorías de Servicios:** Se agregó un nuevo campo personalizado (`custom_repair_category`) al modelo `fleet.service.type` que reemplaza visualmente al campo nativo de Odoo (`category`). Esto permite tener exactamente las opciones solicitadas: Mantenimiento, Mantenimiento Preventivo, Mantenimiento Correctivo, y Reparación.
+- **Ocultamiento Nativo Protegido:** El campo de Odoo (`category`) se mantiene operando internamente por debajo para evitar romper la integridad de la base de datos de Odoo o los registros previos de otros módulos base.
+- **Limpieza de Menú "Contratos":** Se ocultó por completo el submenú de "Contratos" (Leasing, Seguros) debajo de la categoría "Flota" al establecer la opción nativa de Odoo (`fleet.fleet_vehicle_log_contract_menu`) como inactiva, adecuando la vista a un negocio que solo repara sus propios equipos.
+
 ## 2. Pestaña de Repuestos e Insumos
 Se agregó una nueva pestaña dentro del mismo formulario del servicio llamada **Repuestos / Insumos**.
 - **Modelos involucrados:** Creamos un nuevo modelo técnico `fleet.service.part`.

@@ -19,7 +19,15 @@
    - **Si NO hay inventario:** El servicio queda en *stand by* y se procede a realizar la adquisición mediante el proceso de compras que la empresa ya maneja actualmente de forma independiente. Al llegar los repuestos, se reanuda.
    - **Si SÍ hay inventario:** Se inicia el servicio.
 5. **Cierre de Orden:** El mecánico termina el trabajo, pasa el informe final, se actualiza la orden de servicio y **se da de baja el inventario** consumido.
-6. **Data Histórica:** Capacidad de subir (importar) los servicios y mantenimientos existentes mediante plantillas de Excel, manteniendo el historial de reparaciones por vehículo sin descontar el inventario actual.
+### 6. Personalización de Categorías y Tipos de Servicio
+- **Tipos de Categorías:** La clasificación estándar de "Contratos" y "Servicios" no aplica para el flujo de negocio del cliente.
+- **Nuevas Categorías Requeridas:** En los tipos de servicio (Tipos de mantenimiento), se debe poder agrupar usando estrictamente estas categorías personalizadas:
+  - Mantenimiento
+  - Mantenimiento Preventivo
+  - Mantenimiento Correctivo
+  - Reparación
+- **Ocultamiento de Contratos:** El menú y funcionalidad de "Contratos" de la flota debe ser ocultado ya que la empresa repara sus propios equipos y no maneja un esquema de contratistas de este estilo.
+7. **Data Histórica:** Capacidad de subir (importar) los servicios y mantenimientos existentes mediante plantillas de Excel, manteniendo el historial de reparaciones por vehículo sin descontar el inventario actual.
 
 ## Premisas de Diseño
 - Mantener la solución lo más sencilla posible.

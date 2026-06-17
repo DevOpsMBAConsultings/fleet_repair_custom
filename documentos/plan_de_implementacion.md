@@ -18,6 +18,31 @@ Este plan detalla la arquitectura para solucionar el problema de gestión de rep
 **4. Foco del MVP:** 
 El alcance se centrará estrictamente en lograr un mejor control de inventario, descontando las piezas y repuestos usados en cada servicio para llevar la trazabilidad de las reparaciones de manera eficiente.
 
+### 5. Fase 3: Personalización de Tipos de Servicio y Ocultamiento de Contratos
+**Objetivo**: Eliminar la funcionalidad de contratos del entorno del cliente, y reemplazar las categorías de los tipos de servicio por clasificaciones exactas solicitadas por el negocio.
+
+#### [NEW/MODIFY] `models/fleet_service_type.py`
+Se creará un nuevo modelo/archivo para heredar `fleet.service.type` y agregar un nuevo campo llamado `custom_repair_category` que contenga exactamente: Mantenimiento, Mantenimiento Preventivo, Mantenimiento Correctivo, y Reparación. El campo nativo `category` será ignorado para evitar romper los datos internos de Odoo.
+
+#### [NEW] `views/fleet_service_type_views.xml` (o archivo similar)
+- Reemplazar el campo `category` por `custom_repair_category` en la vista de árbol (`fleet_vehicle_service_types_view_tree`).
+- Reemplazar el campo en la vista de búsqueda (`fleet_vehicle_service_types_view_search`).
+- Ocultar el menú de Contratos (`fleet.fleet_vehicle_log_contract_menu`) asignando `<menuitem id="fleet.fleet_vehicle_log_contract_menu" active="False"/>`.
+
+### 6. Fase 4: Cierre de Ciclo de Inventario y Trazabilidad (Auto-consumo)
+**Objetivo**: Dar de baja automáticamente el inventario cuando la orden pase a "Hecho" y permitir navegar desde el movimiento de inventario (Albarán) de vuelta a la Orden de Servicio original.
+
+#### [NEW] `models/stock_picking.py`
+Se heredará el modelo `stock.picking` para agregar un campo relacional (`fleet_service_id`, tipo Many2one) que conecte el movimiento directamente con la orden de servicio de la flota.
+
+#### [MODIFY] `models/fleet_vehicle_log_services.py`
+Se actualizará el método `_create_stock_picking()` para:
+1. Asignar el nuevo campo `fleet_service_id` en el picking.
+2. Añadir la lógica de auto-validación: Confirmar el picking (`action_confirm`), asignar el stock disponible (`action_assign`), rellenar las cantidades hechas (`quantity_done`), y validar el movimiento (`button_validate()`). Esto asegura que el inventario se descuente de forma inmediata y automática al cerrar la orden.
+
+#### [NEW] `views/stock_picking_views.xml`
+Se heredará la vista formulario de `stock.picking` para insertar el campo `fleet_service_id` debajo del documento de origen, permitiendo que el usuario pueda darle clic y viajar a la orden de servicio directamente desde el módulo de Inventario.
+
 ## Cambios Propuestos
 
 ### 1. Módulo: `fleet_repair_custom`

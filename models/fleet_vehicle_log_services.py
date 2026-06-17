@@ -63,6 +63,7 @@ class FleetVehicleLogServices(models.Model):
                 'location_id': picking_type.default_location_src_id.id,
                 'location_dest_id': location_dest_id.id,
                 'origin': f"{(record.description or 'Servicio')} - {record.vehicle_id.name}",
+                'fleet_service_id': record.id,
                 'company_id': company_id,
             }
             picking = StockPicking.create(picking_vals)
@@ -79,7 +80,13 @@ class FleetVehicleLogServices(models.Model):
                 }
                 StockMove.create(move_vals)
                 
+            # Validar automáticamente el picking
             picking.action_confirm()
+            picking.action_assign()
+            for move in picking.move_ids_without_package:
+                move.quantity_done = move.product_uom_qty
+            picking.button_validate()
+            
             record.picking_id = picking.id
             
     def action_view_picking(self):
