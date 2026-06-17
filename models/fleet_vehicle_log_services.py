@@ -6,13 +6,18 @@ class FleetVehicleLogServices(models.Model):
 
     state = fields.Selection([
         ('draft', 'Borrador'),
+        ('waiting', 'En Espera'),
         ('in_progress', 'En Progreso'),
-        ('done', 'Terminado'),
+        ('done', 'Hecho'),
         ('cancelled', 'Cancelado')
     ], string='Estado', default='draft', required=True, tracking=True)
     
     part_line_ids = fields.One2many('fleet.service.part', 'service_id', string='Repuestos / Insumos')
     picking_id = fields.Many2one('stock.picking', string='Movimiento de Inventario', readonly=True, copy=False)
+
+    def action_waiting(self):
+        for record in self:
+            record.state = 'waiting'
 
     def action_in_progress(self):
         for record in self:
