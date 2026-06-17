@@ -9,10 +9,15 @@ class FleetServiceImage(models.Model):
 
     service_id = fields.Many2one('fleet.vehicle.log.services', string='Servicio', required=True, ondelete='cascade')
     sequence = fields.Integer(string='Secuencia', default=10)
-    image = fields.Image(string='Imagen', max_width=1920, max_height=1920, required=True)
-    image_download = fields.Binary(string='Descargar', related='image', readonly=False)
+    image = fields.Image(string='Imagen', max_width=1920, max_height=1920)
+    image_download = fields.Binary(string='Descargar')
     image_filename = fields.Char(string='Nombre del Archivo')
     description = fields.Char(string='Descripción')
+
+    @api.onchange('image_download')
+    def _onchange_image_download(self):
+        for record in self:
+            record.image = record.image_download
 
     @api.constrains('service_id')
     def _check_image_limit(self):
