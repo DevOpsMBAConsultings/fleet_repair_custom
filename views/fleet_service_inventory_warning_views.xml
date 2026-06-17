@@ -10,7 +10,7 @@
                         <strong>¡Atención!</strong> Se han detectado problemas de disponibilidad en el inventario.
                     </div>
                     <group>
-                        <field name="message" nolabel="1" readonly="1"/>
+                        <field name="message" nolabel="1" readonly="1" widget="html"/>
                     </group>
                 </sheet>
                 <footer>

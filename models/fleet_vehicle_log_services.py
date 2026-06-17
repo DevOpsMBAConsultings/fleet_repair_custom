@@ -39,10 +39,13 @@ class FleetVehicleLogServices(models.Model):
                         ])
                         available_qty = sum(quants.mapped('available_quantity'))
                         if available_qty < line.quantity:
-                            missing_items.append(f"- {line.product_id.name} (Requerido: {line.quantity}, Disponible: {available_qty})")
+                            missing_items.append(f"<li><b>{line.product_id.name}</b> (Requerido: {line.quantity}, Disponible: {available_qty})</li>")
             
             if missing_items:
-                message = "Falta inventario para las siguientes piezas:\n" + "\n".join(missing_items) + "\n\nSi le das a Continuar, la orden pasará a En Progreso."
+                message = "<p style='font-size: 15px; margin-bottom: 10px;'>Falta inventario para las siguientes piezas:</p><ul style='font-size: 14px;'>"
+                message += "".join(missing_items)
+                message += "</ul><p style='font-size: 14px; margin-top: 15px;'><em>¿Desea continuar y pasar a En Progreso de todos modos?</em></p>"
+                
                 wizard = self.env['fleet.service.inventory.warning'].create({
                     'service_id': record.id,
                     'message': message

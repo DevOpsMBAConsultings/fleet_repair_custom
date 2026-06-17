@@ -14,7 +14,10 @@ El formulario estándar de **Mantenimiento/Servicios de Flota** (en la aplicaci�
 - Se filtraron los estados disponibles en el backend de Odoo para la orden de servicio (`fleet.vehicle.log.services`), permitiendo únicamente los 5 estados dictados por las reglas de negocio (Borrador, En Espera, En Progreso, Hecho, Cancelado).
 - Se estabilizó la versión para el entorno de desarrollo y se verificó que el flujo visual corresponde ahora exactamente al proceso real del taller.
 
-### Versión 16.0.1.0.4 (Actual)
+### Versión 16.0.1.0.5 (Actual)
+- **Pop-up de Validación de Inventario:** Se añadió una validación flexible al botón "En Progreso". Si el inventario físico en el almacén es insuficiente para los repuestos solicitados, se abre una ventana emergente advirtiendo al usuario exactamente qué falta (Ej: "Falta inventario para: Bujías (Requerido: 5, Disponible: 0)"). El usuario tiene la libertad de darle a "Continuar de todos modos" o "Cancelar".
+
+## Versión 16.0.1.0.4
 - **Trazabilidad de Inventario:** Se añadió el campo `fleet_service_id` (Orden de Servicio) en el modelo `stock.picking` para que el personal de almacén o el cliente pueda navegar con un clic desde el movimiento de inventario a la orden de servicio.
 - **Auto-consumo:** Se modificó la lógica en `fleet_vehicle_log_services.py` para que, cuando el mecánico finaliza el servicio, el movimiento de inventario (Albarán) se confirme, se le asigne la cantidad necesaria y se **valide automáticamente**, descontando el inventario de forma inmediata y cerrando el ciclo.
 - **Vistas:** Se inyectó el nuevo campo de Orden de Servicio en el formulario de Albaranes (`stock_picking_views.xml`).

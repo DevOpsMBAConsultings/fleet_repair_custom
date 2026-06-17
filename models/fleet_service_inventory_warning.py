@@ -5,7 +5,7 @@ class FleetServiceInventoryWarning(models.TransientModel):
     _description = 'Advertencia de Inventario de Servicio'
 
     service_id = fields.Many2one('fleet.vehicle.log.services', string='Servicio', required=True)
-    message = fields.Text(string='Mensaje', readonly=True)
+    message = fields.Html(string='Mensaje', readonly=True)
 
     def action_continue(self):
         self.ensure_one()
