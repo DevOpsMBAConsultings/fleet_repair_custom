@@ -21,8 +21,14 @@ class FleetVehicleLogServices(models.Model):
     accion_correctiva = fields.Html(string='Acción Correctiva')
     recomendaciones = fields.Html(string='Recomendaciones')
 
-    # Imágenes
-    image_ids = fields.One2many('fleet.service.image', 'service_id', string='Imágenes')
+    # Imágenes (Usando Many2many nativo para widget many2many_binary)
+    image_ids = fields.Many2many(
+        'ir.attachment',
+        'fleet_service_attachment_rel',
+        'service_id',
+        'attachment_id',
+        string='Evidencias Fotográficas'
+    )
 
     def action_waiting(self):
         for record in self:
