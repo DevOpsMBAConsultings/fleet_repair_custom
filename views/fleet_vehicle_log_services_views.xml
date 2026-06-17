@@ -50,7 +50,7 @@
                                 <field name="image" widget="image" options="{'zoom': true, 'size': [128, 128]}" readonly="1"/>
                                 <field name="image_filename" invisible="1"/>
                                 <field name="image_download" widget="binary" filename="image_filename" string="Archivo (Subir/Descargar)"/>
-                                <button name="action_download" type="object" icon="fa-download" title="Descargar" class="btn-primary" attrs="{'invisible': [('image_download', '=', False)]}"/>
+                                <button name="action_download" type="object" icon="fa-download" title="Descargar" attrs="{'invisible': [('image_download', '=', False)]}"/>
                                 <field name="description"/>
                             </tree>
                         </field>
