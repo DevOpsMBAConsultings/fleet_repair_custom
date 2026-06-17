@@ -59,7 +59,7 @@
                                                 </a>
                                                 <div class="dropdown-menu" role="menu">
                                                     <a role="menuitem" type="edit" class="dropdown-item">Editar</a>
-                                                    <a role="menuitem" type="object" name="action_download" class="dropdown-item">Descargar</a>
+                                                    <a t-if="record.image.raw_value" role="menuitem" type="object" name="action_download" class="dropdown-item">Descargar</a>
                                                     <a role="menuitem" type="delete" class="dropdown-item">Eliminar</a>
                                                 </div>
                                             </div>
@@ -83,7 +83,7 @@
                                         </group>
                                         <group>
                                             <field name="description"/>
-                                            <button name="action_download" type="object" string=" Descargar" icon="fa-download" class="btn-secondary"/>
+                                            <button name="action_download" type="object" string=" Descargar" icon="fa-download" class="btn-secondary" attrs="{'invisible': ['|', ('id', '=', False), ('image', '=', False)]}"/>
                                         </group>
                                     </group>
                                 </sheet>

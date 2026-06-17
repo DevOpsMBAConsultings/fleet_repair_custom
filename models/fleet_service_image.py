@@ -14,6 +14,17 @@ class FleetServiceImage(models.Model):
 
     def action_download(self):
         self.ensure_one()
+        if not self.image:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Error',
+                    'message': 'No hay ninguna imagen para descargar.',
+                    'type': 'danger',
+                    'sticky': False,
+                }
+            }
         return {
             'type': 'ir.actions.act_url',
             'url': f'/web/content/fleet.service.image/{self.id}/image?download=true',
