@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="fleet_vehicle_log_services_view_form_inherit_repair" model="ir.ui.view">
+        <field name="name">fleet.vehicle.log.services.form.inherit.repair</field>
+        <field name="model">fleet.vehicle.log.services</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_log_services_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_in_progress" string="Iniciar Servicio" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_done" string="Finalizar Servicio" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'in_progress')]}"/>
+                    <button name="action_cancel" string="Cancelar" type="object" attrs="{'invisible': [('state', 'in', ['done', 'cancelled'])]}"/>
+                    <button name="action_draft" string="Volver a Borrador" type="object" attrs="{'invisible': [('state', '!=', 'cancelled')]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,done"/>
+                </header>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_picking" type="object" class="oe_stat_button" icon="fa-cubes" attrs="{'invisible': [('picking_id', '=', False)]}">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Inventario</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//sheet/group" position="after">
+                <notebook>
+                    <page string="Repuestos / Insumos" name="parts">
+                        <field name="part_line_ids" attrs="{'readonly': [('state', 'in', ['done', 'cancelled'])]}">
+                            <tree editable="bottom">
+                                <field name="product_id"/>
+                                <field name="quantity"/>
+                                <field name="uom_id"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+            <xpath expr="//field[@name='vendor_id']" position="after">
+                <field name="picking_id" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
