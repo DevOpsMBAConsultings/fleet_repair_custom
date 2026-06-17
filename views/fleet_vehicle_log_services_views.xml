@@ -68,6 +68,7 @@
                             <form>
                                 <sheet>
                                     <div class="row">
+                                        <field name="id" invisible="1"/>
                                         <div class="col-4 text-center">
                                             <field name="image" widget="image" class="oe_avatar"/>
                                         </div>
