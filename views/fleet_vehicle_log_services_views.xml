@@ -69,11 +69,9 @@
                                 <sheet>
                                     <div class="row">
                                         <field name="id" invisible="1"/>
-                                        <div class="col-4 text-center">
-                                            <field name="image" widget="image" class="oe_avatar"/>
-                                            <div class="mt-2">
-                                                <button name="action_download" type="object" icon="fa-download" string=" Descargar" class="btn-secondary btn-sm" attrs="{'invisible': ['|', ('id', '=', False), ('image', '=', False)]}"/>
-                                            </div>
+                                        <div class="col-4 d-flex flex-column align-items-center">
+                                            <field name="image" widget="image" options="{'size': [128, 128]}"/>
+                                            <button name="action_download" type="object" icon="fa-download" string=" Descargar" class="btn-secondary btn-sm mt-3" attrs="{'invisible': ['|', ('id', '=', False), ('image', '=', False)]}"/>
                                         </div>
                                         <div class="col-8">
                                             <group>
