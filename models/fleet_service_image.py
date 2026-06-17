@@ -19,6 +19,14 @@ class FleetServiceImage(models.Model):
         for record in self:
             record.image = record.image_download
 
+    def action_download(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/fleet.service.image/{self.id}/image_download?download=true',
+            'target': 'self',
+        }
+
     @api.constrains('service_id')
     def _check_image_limit(self):
         for record in self:
