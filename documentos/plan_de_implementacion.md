@@ -40,8 +40,38 @@ Se actualizará el método `_create_stock_picking()` para:
 1. Asignar el nuevo campo `fleet_service_id` en el picking.
 2. Añadir la lógica de auto-validación: Confirmar el picking (`action_confirm`), asignar el stock disponible (`action_assign`), rellenar las cantidades hechas (`quantity_done`), y validar el movimiento (`button_validate()`). Esto asegura que el inventario se descuente de forma inmediata y automática al cerrar la orden.
 
-#### [NEW] `views/stock_picking_views.xml`
-Se heredará la vista formulario de `stock.picking` para insertar el campo `fleet_service_id` debajo del documento de origen, permitiendo que el usuario pueda darle clic y viajar a la orden de servicio directamente desde el módulo de Inventario.
+#### [MODIFY] `views/stock_picking_views.xml`
+- Añadir el campo `fleet_service_id` en el formulario (`stock.view_picking_form`), preferiblemente en la misma pestaña o grupo donde está el Documento Origen (`origin`), dejándolo como solo lectura.
+
+---
+
+### Fase 6: Informe de Mantenimiento y Evidencias Fotográficas
+
+Esta fase replicará la funcionalidad del módulo `servicio_reparacion` directamente en el módulo de flotas `fleet_repair_custom`.
+
+#### [NEW] `models/fleet_service_image.py`
+- Crear el modelo `fleet.service.image`.
+- Campos: `service_id` (Many2one a `fleet.vehicle.log.services`), `sequence` (Integer), `image` (Binary), `description` (Char).
+- Restricción: Límite máximo de 15 imágenes por servicio.
+
+#### [MODIFY] `models/__init__.py`
+- Importar `fleet_service_image`.
+
+#### [MODIFY] `models/fleet_vehicle_log_services.py`
+- Añadir los 4 campos de texto (tipo `Html` o `Text` según convenga para reportes limpios):
+  - `antecedentes_servicio`
+  - `hallazgos`
+  - `accion_correctiva`
+  - `recomendaciones`
+- Añadir el campo `image_ids` (One2many a `fleet.service.image`).
+
+#### [MODIFY] `security/ir.model.access.csv`
+- Añadir los permisos correspondientes (read, write, create, unlink) para el nuevo modelo `fleet.service.image`.
+
+#### [MODIFY] `views/fleet_vehicle_log_services_views.xml`
+- Agregar dos nuevas pestañas (`<page>`) dentro del `<notebook>`:
+  - **Informe de Mantenimiento**: Agrupará los 4 campos de texto libre.
+  - **Evidencias Fotográficas**: Mostrará el `image_ids` con vista Kanban para visualizar las miniaturas, o lista.
 
 ### 7. Fase 5: Validación Flexible de Inventario (Pop-up de Confirmación)
 **Objetivo**: Advertir al usuario si no hay inventario suficiente al pasar la orden a "En Progreso", pero darle la opción de "Continuar" bajo su propia responsabilidad o "Cancelar".

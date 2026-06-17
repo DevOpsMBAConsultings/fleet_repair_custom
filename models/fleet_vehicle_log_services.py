@@ -15,6 +15,15 @@ class FleetVehicleLogServices(models.Model):
     part_line_ids = fields.One2many('fleet.service.part', 'service_id', string='Repuestos / Insumos')
     picking_id = fields.Many2one('stock.picking', string='Movimiento de Inventario', readonly=True, copy=False)
 
+    # Informe de Mantenimiento
+    antecedentes_servicio = fields.Html(string='Antecedentes del servicio')
+    hallazgos = fields.Html(string='Hallazgos')
+    accion_correctiva = fields.Html(string='Acción Correctiva')
+    recomendaciones = fields.Html(string='Recomendaciones')
+
+    # Imágenes
+    image_ids = fields.One2many('fleet.service.image', 'service_id', string='Imágenes')
+
     def action_waiting(self):
         for record in self:
             record.state = 'waiting'
