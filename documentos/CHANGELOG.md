@@ -16,7 +16,7 @@ El formulario estándar de **Mantenimiento/Servicios de Flota** (en la aplicaci�
 
 ### Versión 16.0.1.0.6 (Actual)
 - **Informe de Mantenimiento:** Se replicó la funcionalidad de reportes diagnósticos añadiendo una pestaña con campos de texto para: Antecedentes del servicio, Hallazgos, Acción Correctiva, y Recomendaciones.
-- **Evidencias Fotográficas:** Se añadió una nueva pestaña para poder subir hasta 15 fotografías por orden de servicio, permitiendo llevar un registro visual del estado del vehículo antes y después de la reparación.
+- **Evidencias Fotográficas Rápidas:** Se cambió el método de subida de imágenes a la ventana nativa del sistema operativo (widget `many2many_binary`), permitiendo a los mecánicos seleccionar y adjuntar múltiples fotos al mismo tiempo con un solo clic.
 
 ## Versión 16.0.1.0.5
 - **Pop-up de Validación de Inventario:** Se añadió una validación flexible al botón "En Progreso". Si el inventario físico en el almacén es insuficiente para los repuestos solicitados, se abre una ventana emergente advirtiendo al usuario exactamente qué falta (Ej: "Falta inventario para: Bujías (Requerido: 5, Disponible: 0)"). El usuario tiene la libertad de darle a "Continuar de todos modos" o "Cancelar".
