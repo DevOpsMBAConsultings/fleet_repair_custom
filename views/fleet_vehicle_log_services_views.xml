@@ -44,9 +44,13 @@
                         </group>
                     </page>
                     <page string="Evidencias Fotográficas" name="images">
-                        <group>
-                            <field name="image_ids" widget="many2many_binary" string="Adjuntar Imágenes" nolabel="1"/>
-                        </group>
+                        <p class="text-muted">Puedes agregar hasta 15 imágenes por orden de servicio.</p>
+                        <field name="image_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="image" widget="image" options="{'zoom': true, 'size': [128, 128]}"/>
+                                <field name="description"/>
+                            </tree>
+                        </field>
                     </page>
                 </notebook>
             </xpath>

@@ -1,0 +1,20 @@
+# -*- coding: utf-8 -*-
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
+
+class FleetServiceImage(models.Model):
+    _name = 'fleet.service.image'
+    _description = 'Imagen de Orden de Servicio'
+    _order = 'sequence, id'
+
+    service_id = fields.Many2one('fleet.vehicle.log.services', string='Servicio', required=True, ondelete='cascade')
+    sequence = fields.Integer(string='Secuencia', default=10)
+    image = fields.Image(string='Imagen', max_width=1920, max_height=1920, required=True)
+    description = fields.Char(string='Descripción')
+
+    @api.constrains('service_id')
+    def _check_image_limit(self):
+        for record in self:
+            count = self.search_count([('service_id', '=', record.service_id.id)])
+            if count > 15:
+                raise ValidationError("No se pueden agregar más de 15 imágenes por servicio.")
