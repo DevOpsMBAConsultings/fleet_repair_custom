@@ -47,9 +47,8 @@
                         <p class="text-muted">Puedes agregar hasta 15 imágenes por orden de servicio.</p>
                         <field name="image_ids" nolabel="1">
                             <tree editable="bottom">
-                                <field name="image" widget="image" options="{'zoom': true, 'size': [128, 128]}" readonly="1"/>
-                                <field name="image_filename" invisible="1"/>
-                                <field name="image_download" widget="binary" filename="image_filename" string="Archivo (Subir/Descargar)"/>
+                                <field name="image" widget="image" options="{'zoom': true, 'size': [128, 128]}"/>
+                                <button name="action_download" type="object" icon="fa-download" title="Descargar" attrs="{'invisible': [('id', '=', False)]}"/>
                                 <field name="description"/>
                             </tree>
                         </field>
