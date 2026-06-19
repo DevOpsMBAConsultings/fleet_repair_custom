@@ -133,7 +133,9 @@ class FleetVehicleLogServices(models.Model):
                 raise UserError(_("No se encontró un tipo de operación válida para procesar el inventario."))
                 
             # Enviamos a la ubicación virtual de inventario/ajustes para registrar el gasto
-            location_dest_id = self.env.ref('stock.location_inventory', raise_if_not_found=False)
+            location_dest_id = self.env['stock.location'].search([('usage', '=', 'inventory'), ('company_id', 'in', [False, company_id])], limit=1)
+            if not location_dest_id:
+                location_dest_id = self.env.ref('stock.stock_location_customers', raise_if_not_found=False)
             if not location_dest_id:
                 location_dest_id = picking_type.default_location_dest_id
             
