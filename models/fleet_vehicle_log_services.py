@@ -97,15 +97,24 @@ class FleetVehicleLogServices(models.Model):
         for record in self:
             company_id = record.company_id.id or self.env.company.id
             warehouse = self.env['stock.warehouse'].search([('company_id', '=', company_id)], limit=1)
+            
+            # Buscamos operación interna (Consumo propio)
             picking_type = self.env['stock.picking.type'].search([
-                ('code', '=', 'outgoing'),
+                ('code', '=', 'internal'),
                 ('warehouse_id', '=', warehouse.id)
             ], limit=1)
             
             if not picking_type:
-                raise UserError(_("No se encontró un tipo de operación de salida (Delivery) en el almacén principal."))
+                picking_type = self.env['stock.picking.type'].search([
+                    ('code', '=', 'outgoing'),
+                    ('warehouse_id', '=', warehouse.id)
+                ], limit=1)
                 
-            location_dest_id = self.env.ref('stock.stock_location_customers', raise_if_not_found=False)
+            if not picking_type:
+                raise UserError(_("No se encontró un tipo de operación válida para procesar el inventario."))
+                
+            # Enviamos a la ubicación virtual de inventario/ajustes para registrar el gasto
+            location_dest_id = self.env.ref('stock.location_inventory', raise_if_not_found=False)
             if not location_dest_id:
                 location_dest_id = picking_type.default_location_dest_id
             
@@ -113,7 +122,7 @@ class FleetVehicleLogServices(models.Model):
                 'picking_type_id': picking_type.id,
                 'location_id': picking_type.default_location_src_id.id,
                 'location_dest_id': location_dest_id.id,
-                'origin': f"{(record.description or 'Servicio')} - {record.vehicle_id.name}",
+                'origin': f"{(record.description or 'Servicio Flota')} - {record.vehicle_id.name}",
                 'fleet_service_id': record.id,
                 'company_id': company_id,
             }
@@ -131,15 +140,23 @@ class FleetVehicleLogServices(models.Model):
                 }
                 StockMove.create(move_vals)
                 
-            # Validar automáticamente el picking
+            # =================================================================
+            # AQUÍ COMIENZA EL CAMBIO (REEMPLAZA LO ANTERIOR)
+            # =================================================================
             picking.action_confirm()
-            picking.action_assign()
-            for move in picking.move_ids_without_package:
-                move.quantity_done = move.product_uom_qty
-            picking.button_validate()
+            picking.action_assign() 
+            
+            if picking.state == 'assigned':
+                for move in picking.move_ids_without_package:
+                    move.quantity_done = move.product_uom_qty
+                picking.button_validate()
+            else:
+                picking.action_cancel()
+                raise UserError(_("¡Aviso del sistema! No hay suficiente inventario disponible para rebajar estas piezas. Por favor, asegúrese de haber creado y recibido la Orden de Compra por los repuestos faltantes antes de finalizar este servicio."))
             
             record.picking_id = picking.id
-            
+            # =================================================================
+
     def action_view_picking(self):
         self.ensure_one()
         if not self.picking_id:
