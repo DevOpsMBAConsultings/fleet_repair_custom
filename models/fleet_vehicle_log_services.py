@@ -32,15 +32,22 @@ class FleetVehicleLogServices(models.Model):
         for record in self:
             record.state = 'waiting'
 
-    def action_in_progress(self):
+    def _check_inventory_and_proceed(self, next_state):
         for record in self:
             missing_items = []
             company_id = record.company_id.id or self.env.company.id
             warehouse = self.env['stock.warehouse'].search([('company_id', '=', company_id)], limit=1)
+            
+            # Buscar ubicación de salida (igual que en onchange)
             picking_type = self.env['stock.picking.type'].search([
-                ('code', '=', 'outgoing'),
+                ('code', '=', 'internal'),
                 ('warehouse_id', '=', warehouse.id)
             ], limit=1)
+            if not picking_type:
+                picking_type = self.env['stock.picking.type'].search([
+                    ('code', '=', 'outgoing'),
+                    ('warehouse_id', '=', warehouse.id)
+                ], limit=1)
             
             if picking_type and picking_type.default_location_src_id:
                 location_id = picking_type.default_location_src_id
@@ -55,13 +62,15 @@ class FleetVehicleLogServices(models.Model):
                             missing_items.append(f"<li><b>{line.product_id.name}</b> (Requerido: {line.quantity}, Disponible: {available_qty})</li>")
             
             if missing_items:
+                state_label = "En Progreso" if next_state == 'in_progress' else "Finalizar"
                 message = "<p style='font-size: 15px; margin-bottom: 10px;'>Falta inventario para las siguientes piezas:</p><ul style='font-size: 14px;'>"
                 message += "".join(missing_items)
-                message += "</ul><p style='font-size: 14px; margin-top: 15px;'><em>¿Desea continuar y pasar a En Progreso de todos modos?</em></p>"
+                message += f"</ul><p style='font-size: 14px; margin-top: 15px;'><em>¿Desea continuar y pasar a {state_label} de todos modos?</em></p>"
                 
                 wizard = self.env['fleet.service.inventory.warning'].create({
                     'service_id': record.id,
-                    'message': message
+                    'message': message,
+                    'next_state': next_state
                 })
                 return {
                     'name': 'Advertencia de Inventario',
@@ -72,13 +81,19 @@ class FleetVehicleLogServices(models.Model):
                     'target': 'new',
                 }
                 
-            record.state = 'in_progress'
+            # Si no hay faltantes, proceder directamente
+            if next_state == 'done':
+                if record.part_line_ids and not record.picking_id:
+                    record._create_stock_picking()
+                record.state = 'done'
+            else:
+                record.state = 'in_progress'
+
+    def action_in_progress(self):
+        return self._check_inventory_and_proceed('in_progress')
 
     def action_done(self):
-        for record in self:
-            if record.part_line_ids and not record.picking_id:
-                record._create_stock_picking()
-            record.state = 'done'
+        return self._check_inventory_and_proceed('done')
             
     def action_cancel(self):
         for record in self:
