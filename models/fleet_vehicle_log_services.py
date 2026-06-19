@@ -62,7 +62,7 @@ class FleetVehicleLogServices(models.Model):
                             missing_items.append(f"<li><b>{line.product_id.name}</b> (Requerido: {line.quantity}, Disponible: {available_qty})</li>")
             
             if missing_items:
-                state_label = "En Progreso" if next_state == 'in_progress' else "Finalizar"
+                state_label = "En Progreso" if next_state == 'in_progress' else "Hecho"
                 message = "<p style='font-size: 15px; margin-bottom: 10px;'>Falta inventario para las siguientes piezas:</p><ul style='font-size: 14px;'>"
                 message += "".join(missing_items)
                 message += f"</ul><p style='font-size: 14px; margin-top: 15px;'><em>¿Desea continuar y pasar a {state_label} de todos modos?</em></p>"
@@ -165,13 +165,10 @@ class FleetVehicleLogServices(models.Model):
             picking.action_confirm()
             picking.action_assign() 
             
-            if picking.state == 'assigned':
-                for move in picking.move_ids_without_package:
-                    move.quantity_done = move.product_uom_qty
-                picking.button_validate()
-            else:
-                picking.action_cancel()
-                raise UserError(_("¡Aviso del sistema! No hay suficiente inventario disponible para rebajar estas piezas. Por favor, asegúrese de haber creado y recibido la Orden de Compra por los repuestos faltantes antes de finalizar este servicio."))
+            for move in picking.move_ids_without_package:
+                move.quantity_done = move.product_uom_qty
+            
+            picking.with_context(skip_backorder=True, skip_immediate=True).button_validate()
             
             record.picking_id = picking.id
             # =================================================================
