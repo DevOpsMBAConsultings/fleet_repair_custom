@@ -11,8 +11,7 @@ class FleetServicePart(models.Model):
 
     @api.onchange('product_id', 'quantity')
     def _onchange_product_id(self):
-        state = self.service_id.state or self.env.context.get('default_state', 'draft')
-        if state == 'in_progress' and self.product_id and self.product_id.type == 'product':
+        if self.product_id and self.product_id.type == 'product':
             # Revisamos disponibilidad en inventario
             company_id = self.service_id.company_id.id or self.env.company.id
             warehouse = self.env['stock.warehouse'].search([('company_id', '=', company_id)], limit=1)
