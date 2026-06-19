@@ -11,16 +11,23 @@ class FleetServicePart(models.Model):
 
     @api.onchange('product_id', 'quantity')
     def _onchange_product_id(self):
-        if self.service_id.state == 'in_progress' and self.product_id and self.product_id.type == 'product':
+        state = self.service_id.state or self.env.context.get('default_state', 'draft')
+        if state == 'in_progress' and self.product_id and self.product_id.type == 'product':
             # Revisamos disponibilidad en inventario
             company_id = self.service_id.company_id.id or self.env.company.id
             warehouse = self.env['stock.warehouse'].search([('company_id', '=', company_id)], limit=1)
             
-            # Buscamos la ubicación de salida del almacén
+            # Buscamos la ubicación de salida del almacén (igual que en _create_stock_picking)
             picking_type = self.env['stock.picking.type'].search([
-                ('code', '=', 'outgoing'),
+                ('code', '=', 'internal'),
                 ('warehouse_id', '=', warehouse.id)
             ], limit=1)
+            
+            if not picking_type:
+                picking_type = self.env['stock.picking.type'].search([
+                    ('code', '=', 'outgoing'),
+                    ('warehouse_id', '=', warehouse.id)
+                ], limit=1)
             
             if picking_type and picking_type.default_location_src_id:
                 location_id = picking_type.default_location_src_id
@@ -33,14 +40,14 @@ class FleetServicePart(models.Model):
                 if available_qty < self.quantity:
                     return {
                         'warning': {
-                            'title': _('Inventario Insuficiente'),
+                            'title': _('Advertencia de Inventario'),
                             'message': _(
-                                'No hay suficiente stock de "%s".\n'
-                                'Requerido: %s\n'
-                                'Disponible: %s\n\n'
-                                'Sugerencia: Si el mecánico detectó que se necesita esta pieza mientras reparaba, '
-                                'te sugerimos guardar el registro y presionar "Poner en Espera" para pausar el servicio '
-                                'hasta que llegue el repuesto.'
+                                '¡Atención! Se han detectado problemas de disponibilidad en el inventario.\n\n'
+                                'Falta inventario para la pieza:\n'
+                                '- %s (Requerido: %s, Disponible: %s)\n\n'
+                                'Si necesitas este repuesto, te sugerimos pulsar "Aceptar", guardar la línea y '
+                                'luego presionar el botón "Poner en Espera" para detener temporalmente el servicio '
+                                'hasta que se reciba el inventario.'
                             ) % (self.product_id.name, self.quantity, available_qty)
                         }
                     }
