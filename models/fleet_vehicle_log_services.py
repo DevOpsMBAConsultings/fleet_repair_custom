@@ -105,6 +105,10 @@ class FleetVehicleLogServices(models.Model):
         for record in self:
             record.state = 'draft'
 
+    def action_reopen(self):
+        for record in self:
+            record.state = 'in_progress'
+
     def _create_stock_picking(self):
         StockPicking = self.env['stock.picking']
         StockMove = self.env['stock.move']

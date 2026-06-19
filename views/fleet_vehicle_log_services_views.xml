@@ -12,6 +12,7 @@
                     <button name="action_done" string="Finalizar Servicio" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'in_progress')]}"/>
                     <button name="action_cancel" string="Cancelar" type="object" attrs="{'invisible': [('state', 'in', ['done', 'cancelled'])]}"/>
                     <button name="action_draft" string="Volver a Borrador" type="object" attrs="{'invisible': [('state', '!=', 'cancelled')]}"/>
+                    <button name="action_reopen" string="Reabrir Servicio" type="object" attrs="{'invisible': [('state', '!=', 'done')]}"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,waiting,in_progress,done"/>
                 </header>
             </xpath>
