@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//header" position="replace">
                 <header>
-                    <button name="action_waiting" string="Poner en Espera" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_waiting" string="Poner en Espera" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', ['draft', 'in_progress'])]}"/>
                     <button name="action_in_progress" string="Iniciar Servicio" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', ['draft', 'waiting'])]}"/>
                     <button name="action_done" string="Finalizar Servicio" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'in_progress')]}"/>
                     <button name="action_cancel" string="Cancelar" type="object" attrs="{'invisible': [('state', 'in', ['done', 'cancelled'])]}"/>
