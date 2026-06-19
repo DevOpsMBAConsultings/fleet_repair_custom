@@ -14,7 +14,11 @@ El formulario estándar de **Mantenimiento/Servicios de Flota** (en la aplicaci�
 - Se filtraron los estados disponibles en el backend de Odoo para la orden de servicio (`fleet.vehicle.log.services`), permitiendo únicamente los 5 estados dictados por las reglas de negocio (Borrador, En Espera, En Progreso, Hecho, Cancelado).
 - Se estabilizó la versión para el entorno de desarrollo y se verificó que el flujo visual corresponde ahora exactamente al proceso real del taller.
 
-### Versión 16.0.1.0.6 (Actual)
+### Versión 16.0.1.0.25 (Actual)
+- **Advertencia en Tiempo Real:** Se agregó validación instantánea (Onchange) que advierte al usuario si agrega o modifica repuestos sin stock mientras el servicio está "En Progreso", sugiriéndole pausar el servicio.
+- **Pausar Servicio:** Se habilitó la visibilidad del botón "Poner en Espera" también durante el estado "En Progreso" para permitir detener un servicio por falta de refacciones o insumos no previstos.
+
+### Versión 16.0.1.0.6
 - **Informe de Mantenimiento:** Se replicó la funcionalidad de reportes diagnósticos añadiendo una pestaña con campos de texto para: Antecedentes del servicio, Hallazgos, Acción Correctiva, y Recomendaciones.
 - **Evidencias Fotográficas Rápidas:** Se cambió el método de subida de imágenes a la ventana nativa del sistema operativo (widget `many2many_binary`), permitiendo a los mecánicos seleccionar y adjuntar múltiples fotos al mismo tiempo con un solo clic.
 
